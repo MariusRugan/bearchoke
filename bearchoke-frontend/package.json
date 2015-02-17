@@ -14,10 +14,28 @@
     "underscore.string": "~2.4.0"
   },
   "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-append-sourcemapping": "~0.0.2",
+    "grunt-bower-task": "v0.3.4",
+    "grunt-closure-compiler": "~0.0.17",
+    "grunt-contrib-clean": "~0.4.1",
+    "grunt-contrib-compass": "~0.2.0",
+    "grunt-contrib-connect": "~0.1.2",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "~0.6.0",
+    "grunt-devtools": "latest",
+    "grunt-md5": "~0.1.0",
+    "grunt-parallel": "~0.3.1",
+    "grunt-recess": "~0.3.5",
+    "grunt-shell": "~0.4.0",
+    "grunt-browser-sync": "~2.0.0",
+    "load-grunt-tasks": "~0.3.0",
     "lineman": "^0.34.1",
     "lineman-angular": "^0.3.0",
-    "lineman-less": "^0.1.0",
-    "grunt-cli": "^0.1.13"
+    "lineman-less": "^0.1.0"
   },
   "scripts": {
     "start": "lineman run",

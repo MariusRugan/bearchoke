@@ -93,6 +93,8 @@ When you are set up with your project successfully, install the Project Lombok p
 ## /etc/hosts
 Add/modify following services' IPs to your /etc/hosts
 
+127.0.0.1       dev.bearchoke.com
+
 127.0.0.1       rabbitmq.dev.bearchoke.com
 
 127.0.0.1       mongodb.dev.bearchoke.com
@@ -157,7 +159,7 @@ To deploy the server on Cloud Foundry, the active profiles would be. Of course y
 Cloud Foundry:
 
 	$ -Dspring.profiles.active=mongodb-cloud,redis-cloud,rabbit-cloud		
-Finally, the app has been configured to use a custom domain. Please edit your /etc/hosts file and add dev.bearchoke.com. You can verify that the bearchoke-server web application is running by going to http://dev.bearchoke.com:8080 in your browser.
+Finally, the app has been configured to use a custom domain. You can verify that the bearchoke-server web application is running by going to http://dev.bearchoke.com:8080 in your browser.
 
 Next, you have to start the bearchoke-frontend application. Type the following in a new Terminal / Command Prompt window:
 

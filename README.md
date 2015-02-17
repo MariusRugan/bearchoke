@@ -90,6 +90,17 @@ When you are set up with your project successfully, install the Project Lombok p
 
 ## Setting up Databases and Queues
 
+## /etc/hosts
+Add/modify following services' IPs to your /etc/hosts
+
+127.0.0.1       rabbitmq.dev.bearchoke.com
+
+127.0.0.1       mongodb.dev.bearchoke.com
+
+127.0.0.1       redis.dev.bearchoke.com
+
+127.0.0.1       postgres.dev.bearchoke.com
+
 ## Redis (required for every type of active spring profile)
 [Redis](http://www.redis.io) is used by [Spring Session](https://github.com/spring-projects/spring-session) to keep a user session over several protocols and devices without needing a cookie (aka JSESSION_ID). Once a user is authenticated, the user can make calls over REST and Web Socket seamlessly.
 

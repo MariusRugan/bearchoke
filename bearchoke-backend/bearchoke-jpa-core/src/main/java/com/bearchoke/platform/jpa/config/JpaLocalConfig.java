@@ -17,6 +17,9 @@
 package com.bearchoke.platform.jpa.config;
 
 import com.atomikos.jdbc.AtomikosDataSourceBean;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import org.springframework.cloud.config.java.AbstractCloudConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,23 +45,48 @@ public class JpaLocalConfig {
     @Inject
     private Environment environment;
 
-    @Bean(initMethod = "init", destroyMethod = "close")
+//    @Bean(initMethod = "init", destroyMethod = "close")
+//    public DataSource dataSource() {
+//        AtomikosDataSourceBean ds = new AtomikosDataSourceBean();
+//        ds.setUniqueResourceName(environment.getProperty("jpa.unique.resource.name"));
+//        ds.setXaDataSourceClassName(environment.getProperty("jpa.xa.datasource.classname"));
+//        ds.setMinPoolSize(environment.getProperty("jpa.ds.minpoolsize", Integer.class));
+//        ds.setMaxPoolSize(environment.getProperty("jpa.ds.maxpoolsize", Integer.class));
+//
+//        Properties props = new Properties();
+//        props.put("databaseName", environment.getProperty("jpa.db.name"));
+//        props.put("createDatabase", environment.getProperty("jpa.db.create.strategy"));
+//        ds.setXaProperties(props);
+//
+//        ds.setPoolSize(1);
+//
+//
+//        return ds;
+//    }
+
+    /**
+     * HikariDataSource
+     */
+    @Bean(destroyMethod = "close")
     public DataSource dataSource() {
-        AtomikosDataSourceBean ds = new AtomikosDataSourceBean();
-        ds.setUniqueResourceName(environment.getProperty("jpa.unique.resource.name"));
-        ds.setXaDataSourceClassName(environment.getProperty("jpa.xa.datasource.classname"));
-        ds.setMinPoolSize(environment.getProperty("jpa.ds.minpoolsize", Integer.class));
-        ds.setMaxPoolSize(environment.getProperty("jpa.ds.maxpoolsize", Integer.class));
 
-        Properties props = new Properties();
-        props.put("databaseName", environment.getProperty("jpa.db.name"));
-        props.put("createDatabase", environment.getProperty("jpa.db.create.strategy"));
-        ds.setXaProperties(props);
+      HikariConfig config = new HikariConfig();
 
-        ds.setPoolSize(1);
+      config.setDriverClassName("org.postgresql.Driver");
+      config.setJdbcUrl("jdbc:postgresql://postgresql.dev.bearchoke.com:5432/bearchoke");
+      config.setUsername("orion");
+      config.setPassword("orion");
+      config.setAutoCommit(false);
+      config.setMaximumPoolSize(5);
+      config.setMinimumIdle(2);
 
+      //config.addDataSourceProperty("cachePrepStmts", "true");
+      //config.addDataSourceProperty("prepStmtCacheSize", "250");
+      //config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+      //config.addDataSourceProperty("useServerPrepStmts", "true");
 
-        return ds;
+      HikariDataSource dataSource = new HikariDataSource(config);
+      return dataSource;
     }
 
 }

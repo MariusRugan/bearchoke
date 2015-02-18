@@ -113,5 +113,13 @@
             <version>${postgresql.version}</version>
         </dependency>
 
+        <!--JDBC Connection Pool - Hikari-->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikaricp.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 </project>

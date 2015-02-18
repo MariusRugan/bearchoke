@@ -22,10 +22,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -43,7 +46,7 @@ import java.util.Properties;
  */
 @Configuration
 @Profile("jpa")
-@EnableJpaRepositories("com.bearchoke.platform.jpa")
+@EnableJpaRepositories(basePackages = {"org.axonframework.eventstore.jpa", "com.bearchoke.platform.jpa"})
 @EnableTransactionManagement
 public class JpaCoreConfig {
 
@@ -54,28 +57,31 @@ public class JpaCoreConfig {
     private DataSource dataSource;
 
     @Bean
-    public EntityManagerFactory entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
-        lef.setDataSource(dataSource);
-        lef.setJpaVendorAdapter(jpaVendorAdapter());
+    public EntityManagerFactory entityManagerFactory(JpaVendorAdapter jpaVendorAdapter) {
+
+        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        factory.setDataSource(dataSource);
+        factory.setJpaVendorAdapter(jpaVendorAdapter);
+
         String[] packages = environment.getProperty("jpa.packages.to.scan").split(",");
-        lef.setPackagesToScan(packages);
+        factory.setPackagesToScan(packages);
 
-        Properties props = new Properties();
-        props.put("hibernate.show_sql", "true");
-        props.put("hibernate.format_sql", "true");
-        props.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
-        props.put("hibernate.connection.charSet", "UTF-8");
-        props.put("hibernate.current_session_context_class", "jta");
-        props.put("hibernate.archive.autodetection", "class");
-        props.put("hibernate.transaction.manager_lookup_class", "com.atomikos.icatch.jta.hibernate3.TransactionManagerLookup");
-        props.put("hibernate.dialect", environment.getProperty("jpa.dialect"));
-        props.put("hibernate.hbm2ddl.auto", environment.getProperty("jpa.hibernate.create.strategy"));
-        lef.setJpaProperties(props);
+        factory.setJpaProperties(dataSourceConfig());
+        factory.afterPropertiesSet();
 
-        lef.afterPropertiesSet();
+        return factory.getObject();
+    }
 
-        return lef.getObject();
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
+        return transactionManager;
+    }
+
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+        return new PersistenceExceptionTranslationPostProcessor();
     }
 
     @Bean
@@ -108,6 +114,31 @@ public class JpaCoreConfig {
     public JtaTransactionManager jtaTransactionManager() throws SystemException {
         JtaTransactionManager jtam = new JtaTransactionManager(userTransactionImp(), userTransactionManager());
         return jtam;
+    }
+
+    private Properties dataSourceConfig() {
+      Properties props = new Properties();
+
+      props.put("hibernate.connection.charSet", "UTF-8");
+
+      props.put("hibernate.show_sql", "true");
+      props.put("hibernate.use_sql_comments", "true");
+      props.put("hibernate.format_sql", "true");
+
+      props.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
+
+      props.put("hibernate.current_session_context_class", "jta");
+      props.put("hibernate.archive.autodetection", "class");
+
+      //props.put("hibernate.transaction.manager_lookup_class", "com.atomikos.icatch.jta.hibernate3.TransactionManagerLookup");
+      //props.put("hibernate.dialect", environment.getProperty("jpa.dialect"));
+      //props.put("hibernate.hbm2ddl.auto", environment.getProperty("jpa.hibernate.create.strategy"));
+
+      props.put("hibernate.dialect", "com.bearchoke.platform.jpa.config.PostgreSQL9DialectCustom");
+      props.put("hibernate.hbm2ddl.auto", "");
+      props.put("hibernate.generateDdl", "false");
+
+      return props;
     }
 
 }

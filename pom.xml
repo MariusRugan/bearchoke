@@ -263,5 +263,6 @@
 		<tomcat.maven.plugin.version>2.2</tomcat.maven.plugin.version>
 		<tomcat.embed.version>8.0.15</tomcat.embed.version>
 		<xom.version>1.2.10</xom.version>
+        <hikaricp.version>2.3.2</hikaricp.version>
 	</properties>
 </project>
